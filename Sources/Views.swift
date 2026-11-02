@@ -116,6 +116,11 @@ struct MenuView: View {
                     .card(padding: 10)
             }
 
+            VStack(alignment: .leading, spacing: 6) {
+                SectionLabel("Perfil")
+                ProfileChips(store: store)
+            }
+
             VStack(alignment: .leading, spacing: 8) {
                 SectionLabel("Ritmo · estudo / pausa")
                 HStack(spacing: 6) {
@@ -192,7 +197,8 @@ struct MenuView: View {
                 }
             }
 
-            Text(s.isBreak ? "Apps liberados até a pausa acabar." : "Só apps e sites permitidos estão abertos.")
+            Text(s.isBreak ? "Apps liberados até a pausa acabar."
+                 : s.profileName.map { "Só apps e sites do perfil \($0)." } ?? "Só apps e sites permitidos estão abertos.")
                 .font(.caption).foregroundStyle(.secondary)
 
             ForEach(engine.automationProblems, id: \.self) { name in
@@ -362,7 +368,7 @@ struct EndView: View {
 struct SettingsView: View {
     @ObservedObject var store: Store
     @ObservedObject var engine: FocusEngine
-    @State private var tab = Tab.general
+    @State var tab = Tab.general
 
     enum Tab: String, CaseIterable {
         case general = "Geral", apps = "Apps", sites = "Sites"
@@ -506,6 +512,71 @@ private struct GeneralTab: View {
     }
 }
 
+/// Chips para escolher o perfil em uso (o mesmo no menu e nos Ajustes).
+struct ProfileChips: View {
+    @ObservedObject var store: Store
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(store.config.profiles) { p in
+                    Chip(title: p.name, selected: p.id == store.config.activeProfile.id) { store.selectProfile(p.id) }
+                        .fixedSize()
+                }
+            }
+        }
+    }
+}
+
+/// Perfis nos Ajustes: escolher, criar (copiando o atual), renomear e apagar.
+private struct ProfileBar: View {
+    @ObservedObject var store: Store
+    @State private var renaming = false
+    @State private var deleting = false
+    @State private var newName = ""
+
+    var body: some View {
+        HStack(spacing: 10) {
+            ProfileChips(store: store)
+            Button {
+                store.addProfile()
+                newName = store.config.activeProfile.name
+                renaming = true
+            } label: {
+                Image(systemName: "plus")
+            }
+            .buttonStyle(.plain)
+            .help("Novo perfil (cópia do atual)")
+            Menu {
+                Button("Renomear…") {
+                    newName = store.config.activeProfile.name
+                    renaming = true
+                }
+                Button("Apagar…", role: .destructive) { deleting = true }
+                    .disabled(store.config.profiles.count < 2)
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+            .menuStyle(.button)
+            .buttonStyle(.plain)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .help("Mais opções do perfil")
+        }
+        .alert("Nome do perfil", isPresented: $renaming) {
+            TextField("Ex.: Cálculo, Inglês, Programação", text: $newName)
+            Button("Salvar") { store.renameActiveProfile(newName) }
+            Button("Cancelar", role: .cancel) {}
+        }
+        .alert("Apagar o perfil “\(store.config.activeProfile.name)”?", isPresented: $deleting) {
+            Button("Apagar", role: .destructive) { store.deleteActiveProfile() }
+            Button("Cancelar", role: .cancel) {}
+        } message: {
+            Text("As listas de apps e sites deste perfil serão perdidas.")
+        }
+    }
+}
+
 private struct AppsTab: View {
     @ObservedObject var store: Store
     @State private var apps: [InstalledApp] = []
@@ -521,7 +592,8 @@ private struct AppsTab: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Durante o estudo, só os apps marcados funcionam. O resto é fechado.")
+            ProfileBar(store: store)
+            Text("Durante o estudo com este perfil, só os apps marcados funcionam. O resto é fechado.")
                 .font(.callout).foregroundStyle(.secondary)
             HStack(spacing: 8) {
                 HStack(spacing: 6) {
@@ -593,7 +665,8 @@ private struct SitesTab: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Nos navegadores permitidos, só estes sites (e subdomínios) abrem durante o estudo.")
+            ProfileBar(store: store)
+            Text("Nos navegadores permitidos, só os sites deste perfil (e subdomínios) abrem durante o estudo.")
                 .font(.callout).foregroundStyle(.secondary)
             HStack(spacing: 8) {
                 TextField("Adicionar site, ex: khanacademy.org", text: $newSite)
@@ -678,6 +751,7 @@ struct HistoryView: View {
                                     Text("\(r.studiedMinutes) min").monospacedDigit().foregroundStyle(.secondary)
                                 }
                                 Text(r.start.formatted(date: .abbreviated, time: .shortened)
+                                     + (r.profile.map { " · \($0)" } ?? "")
                                      + (r.completed ? "" : " · cancelada"))
                                     .font(.caption).foregroundStyle(.secondary)
                                 if !r.learned.isEmpty {

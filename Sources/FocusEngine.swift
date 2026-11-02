@@ -14,6 +14,7 @@ struct ActiveSession: Codable {
     var phaseEnd: Date
     var studiedSeconds: Double
     var nextReminder: Date?
+    var profileName: String?
 }
 
 enum Tips {
@@ -92,7 +93,8 @@ final class FocusEngine: ObservableObject {
             studyMinutes: c.studyMinutes, breakMinutes: c.breakMinutes, reminderMinutes: c.reminderMinutes,
             isBreak: false, phaseStart: n, phaseEnd: n + Double(c.studyMinutes * 60),
             studiedSeconds: 0,
-            nextReminder: c.reminderMinutes > 0 ? n + Double(c.reminderMinutes * 60) : nil
+            nextReminder: c.reminderMinutes > 0 ? n + Double(c.reminderMinutes * 60) : nil,
+            profileName: c.activeProfile.name
         )
         if !dryRun { Notifier.send("Foco iniciado 🎯", "\(c.studyMinutes) min de estudo. Bora!") }
         sweepApps()
@@ -118,7 +120,8 @@ final class FocusEngine: ObservableObject {
         guard let s = session else { return }
         let record = SessionRecord(
             start: s.start, end: Date(), intention: s.intention,
-            studiedMinutes: Int(s.studiedSeconds / 60), completed: completed, learned: ""
+            studiedMinutes: Int(s.studiedSeconds / 60), completed: completed, learned: "",
+            profile: s.profileName
         )
         store.add(record)
         session = nil

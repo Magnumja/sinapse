@@ -41,7 +41,7 @@ struct SinapseApp: App {
         Self.openPreviewIfRequested(store: store, engine: engine)
     }
 
-    /// Para conferir o visual sem iniciar sessão: `open build/Sinapse.app --args --preview menu|sessao|ajustes|historico|pausa|cancelar|fim`
+    /// Para conferir o visual sem iniciar sessão: `open build/Sinapse.app --args --preview menu|sessao|ajustes|perfis|historico|pausa|cancelar|fim`
     private static func openPreviewIfRequested(store: Store, engine: FocusEngine) {
         let args = CommandLine.arguments
         guard let i = args.firstIndex(of: "--preview"), i + 1 < args.count else { return }
@@ -55,6 +55,7 @@ struct SinapseApp: App {
                 engine.startDemo(intention: "Cálculo · cap. 3")
                 Windows.show("p", title: "Sessão") { MenuView(store: store, engine: engine) }
             case "ajustes": Windows.show("p", title: "Ajustes") { SettingsView(store: store, engine: engine) }
+            case "perfis": Windows.show("p", title: "Ajustes") { SettingsView(store: store, engine: engine, tab: .sites) }
             case "historico": Windows.show("p", title: "Histórico") { HistoryView(store: store, engine: engine) }
             case "pausa": Windows.show("p", title: "Pausa", dark: true) { BreakView(engine: engine, tip: Tips.breaks[0]) }
             case "cancelar": Windows.show("p", title: "Cancelar") { CancelView(engine: engine, phrase: store.config.cancelPhrase) }

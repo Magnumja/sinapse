@@ -12,7 +12,7 @@ SDK_ARGS=()
 OLD_SDK=$(ls -d /Library/Developer/CommandLineTools/SDKs/MacOSX26*.sdk 2>/dev/null | sort | tail -1 || true)
 if [ ! -d /Applications/Xcode.app ] && [ -n "$OLD_SDK" ]; then SDK_ARGS=(-sdk "$OLD_SDK"); fi
 
-for screen in menu sessao ajustes historico pausa cancelar fim; do
+for screen in menu sessao ajustes perfis historico pausa cancelar fim; do
     build/Sinapse.app/Contents/MacOS/Sinapse --preview "$screen" --snapshot "$(pwd)/$RAW/$screen.png" &
     pid=$!
     sleep 3

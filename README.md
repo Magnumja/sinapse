@@ -26,6 +26,7 @@ Só os apps e sites que você escolher, pausas na hora certa e nada de cancelar 
 
 - **Lista de permitidos.** Durante o estudo, só funcionam os apps que você marcou (por exemplo Claude, ChatGPT, Obsidian e o navegador). Qualquer outro app é fechado na hora, mesmo se você tentar abrir de novo.
 - **Sites permitidos.** No Chrome, Safari, Brave, Edge, Arc e Vivaldi, abas de sites fora da lista viram uma página em branco. Já vem com claude.ai, chatgpt.com, Gemini, Perplexity, NotebookLM e Google Docs/Drive.
+- **Perfis por matéria.** Cada perfil tem sua própria lista de apps e sites: "Programação" libera VS Code, Terminal e GitHub; "Leitura" libera só PDF, Livros e notas. Escolha o perfil no menu antes de começar, e crie quantos quiser.
 - **Ciclos de estudo e pausa.** Ritmos prontos (25/5, 50/10, 60/10, 90/15) ou o seu. Na pausa aparece uma janela com uma sugestão ("Levanta e alonga as costas…") e os apps ficam liberados.
 - **Lembretes durante o estudo.** A cada 20 minutos (configurável): postura, água e descanso dos olhos.
 - **Cancelar dá trabalho de propósito.** Para encerrar antes do fim, você precisa digitar uma frase inteira. Dá pra sair numa emergência, mas não por impulso.
@@ -42,10 +43,8 @@ Só os apps e sites que você escolher, pausas na hora certa e nada de cancelar 
 | <img src="docs/screenshots/pausa.png" width="380" alt="Janela de pausa"> | <img src="docs/screenshots/cancelar.png" width="380" alt="Cancelar exige digitar uma frase"> |
 | **Fim da sessão** | **Histórico** |
 | <img src="docs/screenshots/fim.png" width="380" alt="Revisão no fim da sessão"> | <img src="docs/screenshots/historico.png" width="380" alt="Histórico de sessões"> |
-
-<div align="center">
-<img src="docs/screenshots/ajustes.png" width="560" alt="Ajustes">
-</div>
+| **Perfis** | **Ajustes** |
+| <img src="docs/screenshots/perfis.png" width="380" alt="Perfis com listas de sites próprias"> | <img src="docs/screenshots/ajustes.png" width="380" alt="Ajustes gerais"> |
 
 ## 📦 Instalação
 
@@ -76,8 +75,8 @@ Veja [Compilar a partir do código](#-compilar-a-partir-do-código).
 ## 🚀 Como usar
 
 1. Clique no **ícone do cérebro** na barra de menu, perto do relógio.
-2. Escreva **o que você vai estudar** e escolha o **ritmo** (estudo/pausa) e quantos **ciclos**.
-3. Confira a linha **"Vão fechar"**: são os apps abertos que não estão na sua lista.
+2. Escreva **o que você vai estudar**, escolha o **perfil** (por exemplo Estudo, Programação ou Leitura), o **ritmo** (estudo/pausa) e quantos **ciclos**.
+3. Confira a linha **"Vão fechar"**: são os apps abertos que não estão no perfil escolhido.
 4. Clique em **Iniciar foco** (ou aperte Enter).
 
 Durante a sessão, a barra de menu mostra o tempo restante. Os **Ajustes** ficam travados até o fim, para você não mudar as regras no meio.
@@ -87,8 +86,10 @@ Para configurar, abra **Ajustes**:
 | Aba | O que dá pra mudar |
 | --- | --- |
 | **Geral** | Abrir ao ligar o Mac, tempos de estudo e pausa, ciclos, lembretes e a frase de cancelamento |
-| **Apps** | Quais apps funcionam durante o estudo (busca e filtro "Permitidos") |
-| **Sites** | Quais sites abrem nos navegadores permitidos (subdomínios entram junto) |
+| **Apps** | Quais apps funcionam durante o estudo em cada perfil (busca e filtro "Permitidos") |
+| **Sites** | Quais sites abrem nos navegadores permitidos em cada perfil (subdomínios entram junto) |
+
+Nas abas **Apps** e **Sites**, a barra de perfis no topo escolhe qual perfil você está editando. O **+** cria um perfil novo copiando o atual, e o **⋯** renomeia ou apaga. Quem vem da 1.0 não perde nada: a lista antiga vira o perfil "Estudo".
 
 ## 🔐 Permissões
 
@@ -164,7 +165,7 @@ cd sinapse
 Para ver uma tela sem iniciar uma sessão de verdade (nada é bloqueado nem salvo):
 
 ```bash
-open build/Sinapse.app --args --preview sessao   # menu, sessao, ajustes, historico, pausa, cancelar, fim
+open build/Sinapse.app --args --preview sessao   # menu, sessao, ajustes, perfis, historico, pausa, cancelar, fim
 ```
 
 ### Lançar uma versão

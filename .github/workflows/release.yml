@@ -1,0 +1,47 @@
+# Ao enviar uma tag vX.Y.Z, compila o Sinapse e publica o Sinapse.zip na release.
+# Rodando à mão (aba Actions › Release › Run workflow) só compila e guarda o zip como artefato, sem publicar.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Conferir versão do Info.plist
+        if: github.ref_type == 'tag'
+        run: |
+          version=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" Info.plist)
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::O Info.plist está na versão $version, mas a tag é $GITHUB_REF_NAME."
+            exit 1
+          fi
+
+      - name: Compilar (Apple Silicon + Intel)
+        run: ./build.sh release
+
+      - name: Guardar o zip como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sinapse
+          path: build/Sinapse.zip
+
+      - name: Publicar na release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" build/Sinapse.zip --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" build/Sinapse.zip \
+              --title "Sinapse ${GITHUB_REF_NAME#v}" --generate-notes
+          fi

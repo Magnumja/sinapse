@@ -10,6 +10,7 @@ Só os apps e sites que você escolher, pausas na hora certa e nada de cancelar 
 ![macOS 13+](https://img.shields.io/badge/macOS-13%2B-black?logo=apple)
 ![Swift](https://img.shields.io/badge/Swift-SwiftUI-black?logo=swift)
 ![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-black)
+[![CI](https://github.com/Magnumja/sinapse/actions/workflows/ci.yml/badge.svg)](https://github.com/Magnumja/sinapse/actions/workflows/ci.yml)
 
 [Instalar](#-instalação) · [Como usar](#-como-usar) · [Recursos](#-recursos) · [Permissões](#-permissões) · [Perguntas frequentes](#-perguntas-frequentes) · [Compilar](#-compilar-a-partir-do-código)
 
@@ -165,6 +166,19 @@ Para ver uma tela sem iniciar uma sessão de verdade (nada é bloqueado nem salv
 ```bash
 open build/Sinapse.app --args --preview sessao   # menu, sessao, ajustes, historico, pausa, cancelar, fim
 ```
+
+### Lançar uma versão
+
+O GitHub Actions compila e publica sozinho. A cada push, o [CI](.github/workflows/ci.yml) confere se o app compila. Para lançar:
+
+1. Mude `CFBundleShortVersionString` (ex.: `1.0.2`) e aumente `CFBundleVersion` no `Info.plist`.
+2. Faça commit e envie, depois crie e envie a tag:
+
+   ```bash
+   git tag v1.0.2 && git push origin v1.0.2
+   ```
+
+O [workflow de release](.github/workflows/release.yml) confere se a tag bate com o `Info.plist`, gera o binário universal e publica o `Sinapse.zip` na release. A partir daí, o comando de instalação já entrega a versão nova.
 
 ### Estrutura
 

@@ -55,7 +55,7 @@ struct SinapseApp: App {
                 engine.startDemo(intention: "Cálculo · cap. 3")
                 Windows.show("p", title: "Sessão") { MenuView(store: store, engine: engine) }
             case "ajustes": Windows.show("p", title: "Ajustes") { SettingsView(store: store, engine: engine) }
-            case "historico": Windows.show("p", title: "Histórico") { HistoryView(store: store) }
+            case "historico": Windows.show("p", title: "Histórico") { HistoryView(store: store, engine: engine) }
             case "pausa": Windows.show("p", title: "Pausa", dark: true) { BreakView(engine: engine, tip: Tips.breaks[0]) }
             case "cancelar": Windows.show("p", title: "Cancelar") { CancelView(engine: engine, phrase: store.config.cancelPhrase) }
             case "fim":

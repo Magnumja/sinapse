@@ -2,27 +2,27 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleIdentifier</key>
-    <string>io.github.magnumja.sinapse</string>
-    <key>CFBundleName</key>
-    <string>Sinapse</string>
-    <key>CFBundleDisplayName</key>
-    <string>Sinapse</string>
-    <key>CFBundleExecutable</key>
-    <string>Sinapse</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>1.0</string>
-    <key>CFBundleVersion</key>
-    <string>1</string>
-    <key>CFBundleIconFile</key>
-    <string>AppIcon</string>
-    <key>LSMinimumSystemVersion</key>
-    <string>13.0</string>
-    <key>LSUIElement</key>
-    <true/>
-    <key>NSAppleEventsUsageDescription</key>
-    <string>O Sinapse verifica as abas do navegador para bloquear sites fora da sua lista durante o estudo.</string>
+	<key>CFBundleDisplayName</key>
+	<string>Sinapse</string>
+	<key>CFBundleExecutable</key>
+	<string>Sinapse</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleIdentifier</key>
+	<string>io.github.magnumja.sinapse</string>
+	<key>CFBundleName</key>
+	<string>Sinapse</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.1</string>
+	<key>CFBundleVersion</key>
+	<string>2</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>O Sinapse verifica as abas do navegador para bloquear sites fora da sua lista durante o estudo.</string>
 </dict>
 </plist>

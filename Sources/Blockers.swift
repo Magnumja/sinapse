@@ -62,7 +62,8 @@ enum BrowserFilter {
     }
 
     private static func source(bundleID: String, sites: [String]) -> String {
-        let doms = sites.map { "\"" + $0.replacingOccurrences(of: "\"", with: "") + "\"" }.joined(separator: ", ")
+        // Sites salvos antes da validação também passam pela limpeza, para não quebrar o AppleScript.
+        let doms = sites.map(normalizeSite).filter { !$0.isEmpty }.map { "\"\($0)\"" }.joined(separator: ", ")
         return """
         on hostOf(u)
             set oldTID to AppleScript's text item delimiters
@@ -109,6 +110,10 @@ enum BrowserFilter {
         var s = input.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         for prefix in ["https://", "http://", "www."] where s.hasPrefix(prefix) { s.removeFirst(prefix.count) }
         if let slash = s.firstIndex(of: "/") { s = String(s[..<slash]) }
-        return s
+        if let colon = s.firstIndex(of: ":") { s = String(s[..<colon]) }
+        // Domínio só tem letras, números, ponto e hífen; qualquer outra coisa invalida a entrada.
+        let valid = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789.-")
+        guard s.unicodeScalars.allSatisfy(valid.contains) else { return "" }
+        return s.trimmingCharacters(in: CharacterSet(charactersIn: "."))
     }
 }

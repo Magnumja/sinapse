@@ -72,7 +72,7 @@ struct MenuView: View {
                 LogoMark(size: 22)
                 Text("Sinapse").font(.system(size: 15, weight: .semibold))
                 Spacer()
-                Text("\(store.minutesToday) min hoje")
+                Text("\(store.minutesToday + engine.liveMinutes) min hoje")
                     .font(.caption).monospacedDigit().foregroundStyle(.secondary)
             }
 
@@ -89,7 +89,7 @@ struct MenuView: View {
                     Windows.show("config", title: "Ajustes") { SettingsView(store: store, engine: engine) }
                 }
                 FooterButton(title: "Histórico", icon: "chart.bar") {
-                    Windows.show("history", title: "Histórico") { HistoryView(store: store) }
+                    Windows.show("history", title: "Histórico") { HistoryView(store: store, engine: engine) }
                 }
                 Spacer()
                 if engine.session == nil {
@@ -642,6 +642,7 @@ private struct SitesTab: View {
 
 struct HistoryView: View {
     @ObservedObject var store: Store
+    @ObservedObject var engine: FocusEngine
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -651,8 +652,8 @@ struct HistoryView: View {
             }
 
             HStack(spacing: 10) {
-                stat("Hoje", "\(store.minutesToday)", "min")
-                stat("Semana", "\(store.minutesThisWeek)", "min")
+                stat("Hoje", "\(store.minutesToday + engine.liveMinutes)", "min")
+                stat("Semana", "\(store.minutesThisWeek + engine.liveMinutes)", "min")
                 stat("Sequência", "\(store.streakDays)", store.streakDays == 1 ? "dia" : "dias")
             }
 

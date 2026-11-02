@@ -47,6 +47,10 @@ final class FocusEngine: ObservableObject {
     private var lastTick = Date()
     private var lastBrowserCheck = Date.distantPast
     private var lastNotified: [String: Date] = [:]
+    /// Apps que já receberam o pedido para fechar (pid → quando). Enquanto um deles pergunta
+    /// "Salvar alterações?", não insistimos, senão o aviso some antes de a pessoa responder.
+    private var closing: [pid_t: Date] = [:]
+    private static let closeGrace: TimeInterval = 15
     private static let sessionKey = "sinapse.activeSession"
 
     private static let alwaysAllowed: Set<String> = [
@@ -212,11 +216,16 @@ final class FocusEngine: ObservableObject {
 
     private func sweepApps() {
         guard isStudying else { return }
-        for app in NSWorkspace.shared.runningApplications where !isAllowed(app) { block(app) }
+        let running = NSWorkspace.shared.runningApplications
+        let alive = Set(running.map(\.processIdentifier))
+        closing = closing.filter { alive.contains($0.key) }
+        for app in running where !isAllowed(app) { block(app) }
     }
 
     private func block(_ app: NSRunningApplication) {
-        app.hide()
+        let pid = app.processIdentifier
+        if let asked = closing[pid], Date().timeIntervalSince(asked) < Self.closeGrace { return }
+        closing[pid] = Date()
         app.terminate()
         let name = app.localizedName ?? "App"
         notifyOnce(key: "app:" + (app.bundleIdentifier ?? name), "\(name) foi fechado", "Não está na sua lista de foco.")
@@ -256,6 +265,9 @@ final class FocusEngine: ObservableObject {
         let h = secs / 3600, m = (secs % 3600) / 60, sec = secs % 60
         return h > 0 ? String(format: "%d:%02d:%02d", h, m, sec) : String(format: "%02d:%02d", m, sec)
     }
+
+    /// Minutos já estudados na sessão em andamento (ainda fora do histórico).
+    var liveMinutes: Int { Int((session?.studiedSeconds ?? 0) / 60) }
 
     var phaseProgress: Double {
         guard let s = session else { return 0 }

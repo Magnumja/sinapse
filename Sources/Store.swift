@@ -43,9 +43,10 @@ final class Store: ObservableObject {
     private static let configKey = "sinapse.config"
     private static let historyKey = "sinapse.history"
 
-    /// Histórico de exemplo para prints, só em memória.
+    /// Configuração padrão e histórico de exemplo para prints, só em memória.
     func useDemoHistory() {
         demo = true
+        config = .default
         let cal = Calendar.current
         func at(_ daysAgo: Int, _ hour: Int) -> Date {
             cal.date(bySettingHour: hour, minute: 0, second: 0, of: cal.date(byAdding: .day, value: -daysAgo, to: Date())!)!
